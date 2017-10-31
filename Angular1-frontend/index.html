@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+    </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script type="text/javascript">
+        var app = angular.module('personApp', []);
+        app.controller('postserviceCtrl', function($scope, $http) {
+            $scope.name = null;
+            $scope.age = null;
+            $scope.gender = null;
+            $scope.postdata = function(name, age, gender) {
+                var data = {
+                    name: name,
+                    age: age,
+                    gender: gender
+                };
+                //Call the services
+                $http.post('http://127.0.0.1:8080/person/add', JSON.stringify(data)).then(function(response) {
+                    if (response.data)
+                        $scope.msg = "Post Data Submitted Successfully!";
+                }, function(response) {
+                    $scope.msg = "Service not Exists";
+                    $scope.statusval = response.status;
+                    $scope.statustext = response.statusText;
+                    $scope.headers = response.headers();
+                });
+            };
+        });
+        // ======================================================
+        app.controller('serviceCtrl', function($scope, $http) {
+            $http({
+                method: 'GET',
+                url: 'http://127.0.0.1:8080/person'
+            }).then(function success(response) {
+                $scope.persons = response.data;
+                $scope.statusval = response.status;
+                $scope.statustext = response.statusText;
+                $scope.headers = response.headers();
+            }, function error(response) {});
+        });
+        // ======================================================//
+
+        app.controller('deleteserviceCtrl', function($scope, $http) {
+            $scope.id = null;
+            $scope.name = null;
+            $scope.age = null;
+            $scope.deletedata = function(id, name, age) {
+                var data = {
+                    id: null,
+                    name: name,
+                    age: age
+                };
+                // ======================================================//
+                //Call the service to delete data
+                $http.delete('http://127.0.0.1:8080/person/delete/:id', JSON.stringify(data)).then(function(response) {
+                    if (response.data)
+                        $scope.msg = "Data Deleted Successfully!";
+                }, function(response) {
+                    $scope.msg = "Service not Exists";
+                    $scope.statusval = response.status;
+                    $scope.statustext = response.statusText;
+                    $scope.headers = response.headers();
+                });
+            };
+        });
+        // ======================================================//
+    </script>
+</head>
+
+<body ng-app="personApp">
+    <br>
+    <h2>AngularJS Http Post Method:</h2>
+    <div ng-controller="postserviceCtrl">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                Name :
+                <input ng-model="name" placeholder="surya" />
+                <br/>
+                <br/> Age :
+                <input ng-model="age" placeholder="24" />
+                <br/>
+                <br/> Gender :
+                <input ng-model="gender" placeholder="male"/>
+                <br/>
+                <br/>
+                <input type="button" class="btn btn-primary" value="Add" ng-click="postdata(name, age, gender)" />
+                <br/>
+                <br/>
+                <p>Output Message : {{msg}}</p>
+                <p>StatusCode: {{statusval}}</p>
+                <p>Status: {{statustext}}</p>
+                <p>Response Headers: {{headers}}</p>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <h2>AngularJS Http Get Method:</h2>
+    <div ng-controller="serviceCtrl">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+
+                <div>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>age</th>
+                                <th>Gender</th>
+                                <th>Mobile Number</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="person in persons">
+
+                                <td>{{person.name}}</td>
+                                <td>{{Book.id}}</td>
+                                <td>{{person.age}}</td>
+                                <td>{{person.mobile_no}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>StatusCode: {{statusval}}</p>
+                <p>Status: {{statustext}}</p>
+                <p>Response Headers: {{headers}}</p>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <h2>AngularJS Http Delete Method:</h2>
+
+    <div ng-controller="deleteserviceCtrl">
+
+        <div class="panel panel-primary">
+            <div class="panel-body">
+
+                Id :
+                <input ng-model="id" placeholder="1"/>
+                <br/>
+                <br/> Name :
+                <input ng-model="name" placeholder="surya"/>
+                <br/>
+                <br/> Age :
+                <input ng-model="age" placeholder="24"/>
+                <br/>
+                <br/>
+                <input type="button" class="btn btn-danger" value="Delete" ng-click="deletedata(id,name, age)" />
+                <br/>
+                <br/>
+
+                <p>Output Message : {{msg}}</p>
+                <p>StatusCode: {{statusval}}</p>
+                <p>Status: {{statustext}}</p>
+                <p>Response Headers: {{headers}}</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
